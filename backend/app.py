@@ -1,28 +1,15 @@
 from flask import Flask, request, jsonify
 from kagglehub import model_download
 import pandas as pd
-import random
 
 app = Flask(__name__)
 
-try:
-    file_path = model_download(
-        "spoorthiuk/us-top-10k-artists-and-their-popular-songs",
-        "Artists.csv"
-    )
-    df = pd.read_csv(file_path)
-except:
-    df = pd.read_csv("Artists.csv") 
+df = pd.read_csv("Artists.csv") 
 
 sorted_df = df.sort_values("Popularity", ascending=False).head(500).reset_index(drop=True)
 sorted_df = sorted_df.drop(['ID', 'Genres'], axis=1)
 sorted_df["Name"] = sorted_df["Name"].str.lower()
-
-@app.route('/api/genArtist', methods=['GET'])
-def generate_artist():
-    loc = random.randint(0, len(sorted_df) - 1)
-    artist_info = sorted_df.iloc[loc].to_dict()
-    return jsonify(artist_info)
+sorted_df["Age"] = sorted_df["Age"] + 6
 
 @app.route('/api/check', methods=['POST'])
 def check_guess():
