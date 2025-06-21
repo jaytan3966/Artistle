@@ -5,11 +5,12 @@ import pandas as pd
 app = Flask(__name__)
 
 df = pd.read_csv("Artists.csv") 
+df = df.drop(['ID', 'Genres'], axis=1)
+df = df.dropna()
+df["Name"] = df["Name"].str.lower()
+df["Age"] = df["Age"] + 6
 
 sorted_df = df.sort_values("Popularity", ascending=False).head(500).reset_index(drop=True)
-sorted_df = sorted_df.drop(['ID', 'Genres'], axis=1)
-sorted_df["Name"] = sorted_df["Name"].str.lower()
-sorted_df["Age"] = sorted_df["Age"] + 6
 
 @app.route('/api/check', methods=['POST'])
 def check_guess():
