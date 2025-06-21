@@ -1,11 +1,11 @@
 from flask import Flask, request, jsonify
-from kagglehub import model_download
 import pandas as pd
 
 app = Flask(__name__)
 
 df = pd.read_csv("Artists.csv") 
 df = df.drop(['ID', 'Genres'], axis=1)
+df = df.replace(0, None)
 df = df.dropna()
 df["Name"] = df["Name"].str.lower()
 df["Age"] = df["Age"] + 6
