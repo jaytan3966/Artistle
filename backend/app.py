@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pandas as pd
 
 app = Flask(__name__)
+CORS(app)
+
 
 df = pd.read_csv("Artists.csv") 
 df = df.drop(['ID', 'Genres'], axis=1)
