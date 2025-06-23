@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
 from upstash_redis import Redis
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -16,7 +18,12 @@ df["Age"] = df["Age"] + 6
 
 sorted_df = df.sort_values("Popularity", ascending=False).head(500).reset_index(drop=True)
 
-r = Redis(url="https://romantic-python-15771.upstash.io", token="Aj2bAAIgcDGI0TdUiPAQfOjChM5JBKl8qKHnIJA669EPhc6Tsg12Jw")
+load_dotenv()
+
+r = Redis(
+    url=os.getenv("UPSTASH_REDIS_REST_URL"),
+    token=os.getenv("UPSTASH_REDIS_REST_TOKEN")
+)
 
 @app.route('/api/getArtistle')
 def get_artistle():
