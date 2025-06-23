@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 import pandas as pd
 from upstash_redis import Redis
@@ -27,7 +27,10 @@ r = Redis(
 
 @app.route('/api/getArtistle')
 def get_artistle():
-    return r.get("artistleToday")
+    artist = r.get("artistleToday")
+    response = make_response(artist)
+    response.headers['Cache-Control'] = 'public, max-age=86400'
+    return response
 
 @app.route('/api/check', methods=['POST'])
 def check_guess():

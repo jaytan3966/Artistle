@@ -1,34 +1,26 @@
-"use client"
-import { useEffect, useState } from "react";
-
 export const categories = ["NAME", "GENDER", "AGE", "POPULARITY", "FOLLOWERS"];
-interface artistInfo {
-    Name: string,
-    Gender: string,
-    Age: number,
-    Country: string,
-    Popularity: number,
-    Followers: number,
-    URI: string
+
+function getSecondsToLocalMidnight() {
+  const now = new Date();
+  const midnight = new Date();
+  
+  midnight.setHours(24, 0, 0, 0);
+  
+  const diffMs = midnight.getTime() - now.getTime();
+  return Math.floor(diffMs / 1000);
 }
 
-export default function GuessGrid(){
+export default async function GuessGrid(){
+    const target = await fetch(
+        `http://localhost:5050/api/getArtistle?date=${new Date().toLocaleDateString('en-CA')}`, 
+        {
+            next: { 
+            tags: ['artist-of-the-day'],
+            revalidate: getSecondsToLocalMidnight()
+            }
+        }).then(res => res.json());
+    
 
-    const [target, setTarget] = useState<artistInfo>();
-
-    async function getArtistle(): Promise<artistInfo>{
-        const response = await fetch("http://localhost:5050/api/getArtistle");
-        const data: artistInfo = await response.json()
-        return data;
-    }  
-
-    useEffect(() => { 
-        const fetchArtist = async () => {
-            const target: artistInfo = await getArtistle();
-            setTarget(target);
-        }
-        fetchArtist();
-    }, [])
     return(
         <div className="mx-auto max-w-3xl">
 
@@ -52,10 +44,10 @@ export default function GuessGrid(){
 
             <div className="flex items-center justify-center">
                 <div className="grid">
-                    <div className="box border-2 border-gray-400 rounded-lg text-2xl m-1 duration-500 text-center w-2xl max-w-[98vw]">HINT</div>
+                    <div className="box border-2 border-gray-400 rounded-lg flex justify-center items-center text-2xl h-35 m-1 duration-500 text-center w-2xl max-w-[98vw]">HINT</div>
                     <input className="box border-2 border-gray-400 rounded-md text-2xl m-1 duration-500 text-center w-2xl focus:outline-none max-w-[98vw]" placeholder="Enter guess..."></input>
                     <button className="box border-2 border-gray-400 rounded-md text-2xl font-bold m-1 duration-500 text-center w-2xl hover:bg-white hover:text-[#121213] max-w-[98vw]">SUBMIT</button>
-                    <h1 className="flex items-center justify-center">Target: Name: {target?.Name} Gender: {target?.Gender} Age: {target?.Age} Popularity: {target?.Popularity} Followers: {target?.Followers}</h1>
+                    <h1 className="flex items-center justify-center text-center">Target: Name: {target?.Name} Gender: {target?.Gender} Age: {target?.Age} Popularity: {target?.Popularity} Followers: {target?.Followers}</h1>
                 </div>
             </div>
             
