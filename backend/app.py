@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
+from upstash_redis import Redis
 
 app = Flask(__name__)
 CORS(app)
@@ -14,6 +15,12 @@ df["Name"] = df["Name"].str.lower()
 df["Age"] = df["Age"] + 6
 
 sorted_df = df.sort_values("Popularity", ascending=False).head(500).reset_index(drop=True)
+
+r = Redis(url="https://romantic-python-15771.upstash.io", token="Aj2bAAIgcDGI0TdUiPAQfOjChM5JBKl8qKHnIJA669EPhc6Tsg12Jw")
+
+@app.route('/api/getArtistle')
+def get_artistle():
+    return r.get("artistleToday")
 
 @app.route('/api/check', methods=['POST'])
 def check_guess():
