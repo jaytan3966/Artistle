@@ -10,6 +10,7 @@ export default function Home() {
       </header>
       <div className="flex items-center justify-center">
         <GuessGrid/>
+        
       </div>
       
 

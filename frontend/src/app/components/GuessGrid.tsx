@@ -1,3 +1,4 @@
+import SearchableInput from "./SearchableInput";
 export const categories = ["NAME", "GENDER", "AGE", "POPULARITY", "FOLLOWERS"];
 
 function getSecondsToLocalMidnight() {
@@ -44,9 +45,8 @@ export default async function GuessGrid(){
 
             <div className="flex items-center justify-center">
                 <div className="grid">
-                    <div className="box border-2 border-gray-400 rounded-lg flex justify-center items-center text-2xl h-35 m-1 duration-500 text-center w-2xl max-w-[98vw]">HINT</div>
-                    <input className="box border-2 border-gray-400 rounded-md text-2xl m-1 duration-500 text-center w-2xl focus:outline-none max-w-[98vw]" placeholder="Enter guess..."></input>
-                    <button className="box border-2 border-gray-400 rounded-md text-2xl font-bold m-1 duration-500 text-center w-2xl hover:bg-white hover:text-[#121213] max-w-[98vw]">SUBMIT</button>
+                    <SearchableInput/>
+                    <button className="box border-2 border-gray-400 rounded-md text-2xl font-bold m-1 duration-500 text-center w-2xl hover:bg-gray-200 hover:text-[#121213] max-w-[98vw]">SUBMIT</button>
                     <h1 className="flex items-center justify-center text-center">Target: Name: {target?.Name} Gender: {target?.Gender} Age: {target?.Age} Popularity: {target?.Popularity} Followers: {target?.Followers}</h1>
                 </div>
             </div>
