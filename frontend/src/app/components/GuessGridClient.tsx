@@ -1,11 +1,23 @@
 "use client"
+export const categories = ["NAME", "GENDER", "AGE", "POPULARITY", "FOLLOWERS"];
 import { useState, ChangeEvent } from "react";
 
-export default function SearchableInput(){
+interface artistInfo{
+    Name: string,
+    Gender: string,
+    Age: number,
+    Popularity: number,
+    Followers: number
+}
+
+interface GuessGridClientProps {
+  target: artistInfo;
+}
+export default function GuessGridClient({target}: GuessGridClientProps){
     const [inputValue, setInputValue] = useState('');
     const [isVisible, setVisible] = useState(false);
     const items = ['TAYLOR SWIFT', 'DRAKE', 'BAD BUNNY', 'THE WEEKND', 'TRAVIS SCOTT', 'LANA DEL REY', 'JUNG KOOK', 'FEID', 'JUSTIN BIEBER', 'ARIANA GRANDE', '21 SAVAGE', 'ARIJIT SINGH', 'KAROL G', 'SZA', 'OLIVIA RODRIGO', 'ED SHEERAN', 'COLDPLAY', 'BRUNO MARS', 'DOJA CAT', 'KENDRICK LAMAR', 'POST MALONE', 'CHRIS BROWN', 'BILLIE EILISH', 'METRO BOOMIN', 'JUICE WRLD', 'DUA LIPA', 'J. COLE', 'ANUEL AA', 'IMAGINE DRAGONS', 'BTS', 'PRITAM', 'MYKE TOWERS', 'DAVID GUETTA', 'MORGAN WALLEN', 'TATE MCRAE', 'SIA', 'BEYONCÉ', 'MICHAEL BUBLÉ', 'DADDY YANKEE', 'ARCTIC MONKEYS', 'XXXTENTACION', 'SHAKIRA', 'OZUNA', 'ANIRUDH RAVICHANDER', 'NOAH KAHAN', 'LINKIN PARK', 'THE BEATLES', 'JACK HARLOW', 'ADELE', 'MALUMA', 'PLAYBOI CARTI', 'HARRY STYLES', 'TYLER, THE CREATOR', 'MARIAH CAREY', 'CALVIN HARRIS', 'GUNNA', 'SAM SMITH', 'MAROON 5', 'LIL UZI VERT', 'MARSHMELLO', 'J BALVIN', 'QUEEN', 'KATY PERRY', 'YOUNG THUG', 'LADY GAGA', 'BRENT FAIYAZ', 'THE NEIGHBOURHOOD', 'ARCÁNGEL', 'STRAY KIDS', 'KALI UCHIS', 'FRANK SINATRA', 'LUKE COMBS', 'LIL PEEP', 'HOZIER', 'MAC MILLER', 'HENRIQUE & JULIANO', 'LUIS MIGUEL', 'JIMIN', 'JAY-Z', 'SFERA EBBASTA', 'RED HOT CHILI PEPPERS', 'SHAWN MENDES', 'SELENA GOMEZ', 'BLACKPINK', 'TIËSTO', '50 CENT', 'ELTON JOHN', 'KHALID', 'ONE DIRECTION', 'DON OMAR', 'SHREYA GHOSHAL', 'FARRUKO', 'STEVE LACY', 'A$AP ROCKY', 'PITBULL', 'MORAT', 'ROMEO SANTOS', 'JAMES ARTHUR', 'LIL DURK', 'ONEREPUBLIC', 'MICHAEL JACKSON', 'TORY LANEZ', 'THE KID LAROI', 'SNOOP DOGG', 'LIL TECCA', 'GUSTTAVO LIMA', 'P!NK', 'TROYE SIVAN', 'BRYANT MYERS', 'WIZ KHALIFA', 'TRIPPIE REDD', 'KELLY CLARKSON', 'POP SMOKE', 'BRITNEY SPEARS', 'GREEN DAY', 'HALSEY', 'RADIOHEAD', 'NIRVANA', 'CHARLIE PUTH', 'AKON', 'ELVIS PRESLEY', 'FLEETWOOD MAC', 'KODAK BLACK', 'JUSTIN TIMBERLAKE', 'USHER', 'ALAN WALKER', 'DAFT PUNK', 'SABRINA CARPENTER', 'CHRIS STAPLETON', 'MELANIE MARTINEZ', 'KID CUDI', 'SEVENTEEN', 'ROSALÍA', 'ÑENGO FLOW', 'EMILIA', 'AC/DC', 'MADONNA', 'JUL', 'NF', 'BING CROSBY', 'PENTATONIX', 'RAYE', 'DEAN MARTIN', 'NLE CHOPPA', 'CHRISTIAN NODAL', 'NAT KING COLE', 'CHENCHO CORLEONE', 'BRYSON TILLER', 'ALKA YAGNIK', 'THE CHAINSMOKERS', 'TWENTY ONE PILOTS', 'TY DOLLA $IGN', 'NICKY JAM', 'A BOOGIE WIT DA HOODIE', 'SEBASTIAN YATRA', 'CAMILA CABELLO', 'SEAN PAUL', 'AVICII', 'LEWIS CAPALDI', 'MARÍLIA MENDONÇA', 'BEBE REXHA', 'NICKI NICOLE', 'UDIT NARAYAN', 'ABBA', 'THE ROLLING STONES', 'CHILDISH GAMBINO', 'CHASE ATLANTIC', 'TINI', 'JULIÓN ÁLVAREZ Y SU NORTEÑO BANDA', 'SUMMER WALKER', 'ALOK', 'ZÉ NETO & CRISTIANO', 'BECKY G', '2PAC', 'A.R. RAHMAN', "GUNS N' ROSES", 'DABABY', 'TYGA', 'NE-YO', 'PARTYNEXTDOOR', 'RAMMSTEIN', 'AVA MAX', 'QUAVO', 'TWICE', 'BLINK-182', 'SECH', 'CREEDENCE CLEARWATER REVIVAL', 'TAME IMPALA', 'WISIN & YANDEL', 'TAINY', 'PINK FLOYD', 'MIGUEL', 'LIL TJAY', 'LIL YACHTY', 'WHAM!', 'SYSTEM OF A DOWN', 'CARDI B', 'DR. DRE', 'BLACK EYED PEAS', 'MEGHAN TRAINOR', 'PLAN B', 'FALL OUT BOY', 'CHINO PACAS', 'YANDEL', 'SLIPKNOT', 'DEMI LOVATO', 'JONAS BROTHERS', 'MATHEUS & KAUAN', 'NINHO', 'JID', 'MANÁ', 'REIK', 'PARAMORE', 'JHENÉ AIKO', 'PHARRELL WILLIAMS', 'FLO RIDA', 'GORILLAZ', 'SIMONE MENDES', 'BON JOVI', 'LABRINTH', 'AVENTURA', 'U2', 'BOB MARLEY & THE WAILERS', 'TOMORROW X TOGETHER', 'JASON DERULO', 'FOO FIGHTERS', 'BABY KEEM', 'CAMILO', 'ANDY WILLIAMS', 'BRING ME THE HORIZON', 'DJ SNAKE', 'ENRIQUE IGLESIAS', 'DJ LUIAN', 'LUAN SANTANA', 'KYGO', 'TOM ODELL', 'DAVID KUSHNER', 'KACEY MUSGRAVES', 'LOST FREQUENCIES', 'ALICIA KEYS', 'THE NOTORIOUS B.I.G.', 'OSCAR MAYDON', 'THE 1975', 'RODDY RICCH', '5 SECONDS OF SUMMER', 'MACHINE GUN KELLY', 'CARTEL DE SANTA', 'JUSTIN QUILES', 'LUÍSA SONZA', 'ANDERSON .PAAK', 'TIMBALAND', 'JOHANN SEBASTIAN BACH', 'DAVID BOWIE', 'CHRISTINA AGUILERA', 'STEVIE WONDER', 'ZARA LARSSON', 'LENNY TAVÁREZ', 'DANNY OCEAN', 'JOHN MAYER', 'MACKLEMORE', 'DE LA GHETTO', 'T-PAIN', 'JOHN WILLIAMS', 'JOHN LEGEND', 'BEE GEES', 'PANIC! AT THE DISCO', 'ROBIN SCHULZ', 'THE KILLERS', 'EL ALFA', '2 CHAINZ', 'ALEC BENJAMIN', 'NATE DOGG', '(G)I-DLE', 'FLORENCE + THE MACHINE', 'EAGLES', 'BRUCE SPRINGSTEEN', 'BON IVER', 'BILLY JOEL', 'TITO DOUBLE P', 'SHIVA', 'LOS ÁNGELES AZULES', 'WHITNEY HOUSTON', 'LUDACRIS', 'RUSS', 'SHILPA RAO', 'LUDMILLA', 'ZAYN', 'DILJIT DOSANJH', 'ZION & LENNOX', 'SONU NIGAM', 'KUMAR SANU', 'DJ KHALED', 'NELLY FURTADO', 'NICKELBACK', 'ATIF ASLAM', 'MARC ANTHONY', 'JUANES', 'YO YO HONEY SINGH', 'DEAN LEWIS', 'JUAN LUIS GUERRA 4.40', 'NIALL HORAN', 'HANS ZIMMER', 'CHIEF KEEF', 'LAUV', 'KESHA', 'SKRILLEX', 'MC KEVIN O CHRIS', 'RICARDO ARJONA', 'OASIS', 'LORDE', 'THE POLICE', 'JOAN SEBASTIAN', 'SID SRIRAM', 'THE CURE', 'LOGIC', 'WESLEY SAFADÃO', 'ALEJANDRO SANZ', 'LUKE BRYAN', 'THE STROKES', 'TULUS', 'MEEK MILL', 'CHARLI XCX', 'DIRE STRAITS', 'LORD HURON', 'LILY-ROSE DEPP', 'MAITE PERRONI', 'SHANKAR MAHADEVAN', 'RAF CAMORA', 'SWEDISH HOUSE MAFIA', 'ALEJANDRO FERNÁNDEZ', 'MUSE', 'BOBBY HELMS', 'AEROSMITH', 'GLASS ANIMALS', 'KING GNU', 'JUAN GABRIEL', 'IVAN CORNEJO', 'MONEYBAGG YO', 'PAUL MCCARTNEY', 'PHIL COLLINS', 'UZI', 'DARYL HALL & JOHN OATES', 'BONEZ MC', 'MARRACASH', 'ELLA FITZGERALD', 'PRINCE ROYCE', 'BLACKBEAR', 'TEDUA', 'G-EAZY', 'CALUM SCOTT', 'BRYAN ADAMS', 'KIM PETRAS', 'AMY WINEHOUSE', 'NORIEL', 'ANAHÍ', 'MRS. GREEN APPLE', 'R3HAB', 'AVRIL LAVIGNE', 'H.E.R.', 'VANCE JOY', 'CÉLINE DION', 'YUVAN SHANKAR RAJA', 'BACKSTREET BOYS', 'GHOST', 'JACK JOHNSON', 'MARTIN GARRIX', 'MARCO ANTONIO SOLÍS', 'BRYTIAGO', 'BASTILLE', 'MARVIN GAYE', 'LAZZA', 'RYAN LEWIS', 'T.I.', 'FELIX JAEHN', 'OUTKAST', 'EMPIRE OF THE SUN', 'PEARL JAM', 'THE CRANBERRIES', 'MOHIT CHAUHAN', 'ELLEY DUHÉ', 'OROCHI', 'ALEMÁN', 'FMK', 'HARDY', 'SODA STEREO', 'CALIBRE 50', 'MELENDI', 'RED VELVET', 'KINGS OF LEON', 'DOLLY PARTON', 'HA*ASH', 'THE BEACH BOYS', 'DALEX', 'AGUST D', 'KYLIE MINOGUE', 'PERRY COMO', 'JULIA MICHAELS', 'THE RONETTES', 'PNL', 'ROBBIE WILLIAMS', 'GUSTAVO MIOTO', 'SUNIDHI CHAUHAN', 'CHARLIE BROWN JR.', 'JULIETA VENEGAS', 'NELLY', 'ALESSIA CARA', 'MON LAFERTE', 'JOHN LENNON', 'WOLFGANG AMADEUS MOZART', 'LITTLE MIX', 'JENNIFER LOPEZ', 'KHEA', 'AITANA', 'ALESSO', 'BURL IVES', 'ARMIN VAN BUUREN', 'JONAS BLUE', '6LACK', 'DAMSO', 'SORRISO MAROTO', 'GUÈ', 'VISHAL DADLANI', 'JOSÉ FELICIANO', 'SEZEN AKSU', 'LA OREJA DE VAN GOGH', 'MARK RONSON', 'FUJII KAZE', 'LIZZO', 'DISTURBED', 'NATALIA LAFOURCADE', '*NSYNC', 'RUTH B.', 'JUNGLE', 'YNW MELLY', 'TRAIN', 'TOVE LO', 'GEORGE MICHAEL', 'TOPIC', 'PUSHA T', 'PABLO ALBORÁN', 'BRONCO', 'CLEAN BANDIT', 'JAY CHOU', 'SKI MASK THE SLUMP GOD', 'RAHAT FATEH ALI KHAN', 'LUIS FONSI', 'SKEPTA', 'WILL.I.AM', 'THE JACKSON 5', 'R.E.M.', 'JUICY J', 'COSCULLUELA', 'HINDIA', 'BECKY HILL', 'FLORIDA GEORGIA LINE', 'JASON ALDEAN', 'JEREMIH', 'KISHORE KUMAR', 'DIDDY', 'BACK NUMBER', 'JOURNEY', 'CARLOS RIVERA', 'LANY', 'AURORA', 'GLORIA TREVI', 'BILL WITHERS', 'B.O.B', 'BLAKE SHELTON', 'YG', 'CARLOS VIVES', 'JOHNNY CASH', 'KEHLANI', 'TOTO', 'BUSTA RHYMES', 'GIMS', 'JOEY BADA$$', 'JORJA SMITH', 'DILSINHO', 'JESSIE MURPH', 'FIVE FINGER DEATH PUNCH', 'KEANE', 'GEORGE EZRA', 'NORAH JONES', 'SHANIA TWAIN', 'GERARDO ORTIZ', 'CHAYANNE', 'JAY ROCK', 'GABRY PONTE', 'NATTI NATASHA', 'MUMFORD & SONS', 'DERMOT KENNEDY', 'DJ NELSON', 'YURIDIA', 'DANNA PAOLA', 'ITZY', 'GESAFFELSTEIN', 'WEEZER', 'SOOLKING', 'CARLY RAE JEPSEN', 'LA ADICTIVA']
-
+    
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setInputValue(value);
@@ -20,45 +32,69 @@ export default function SearchableInput(){
         setInputValue(item);
         setVisible(false);
     }
-    
-    return (
-        <div className="relative">
-            <input
-            type="text"
-            placeholder="Enter name..."
-            value={inputValue}
-            onChange={handleInputChange}
-            className="box border-2 border-gray-400 rounded-md text-2xl m-1 duration-500 text-center w-2xl focus:outline-none max-w-[98vw] focus:border-gray-200 transition-all"
-            onFocus={() => setVisible(true)}
-            onBlur={() => setTimeout(() => setVisible(false), 200)}
-            />
-            
-            <div className={`
-                absolute z-10 mt-1 w-full bg-[#171717] shadow-lg rounded-md duration-300
-                transition-all origin-top no-scrollbar
-                ${isVisible ? 
-                    'opacity-100 scale-y-100' : 
-                    'opacity-0 scale-y-95 pointer-events-none'
-                }
-                overflow-y-auto max-h-50
-                border border-gray-200
-            `}>
-                <ul className="divide-y divide-gray-200">
-                {items
-                    .filter(item => item.toLowerCase().includes(inputValue.toLowerCase()))
-                    .map((item, index) => (
-                    <li 
-                        key={index} 
-                        onClick={() => handleItemClick(item)}
-                        className="px-4 py-2 hover:bg-gray-200 hover:text-[#171717] cursor-pointer transition-colors duration-500 max-w-[98vw]"
-                    >
-                        {item}
-                    </li>
-                    ))}
-                </ul>
-            </div>
 
+    return(
+        <div className="mx-auto max-w-3xl">
+            <div className="grid grid-cols-5 mb-2 text-center font-bold max-w-[96vw]">
+                {categories.map((name, i) => (
+                <h1 key={i} className="p-2 text-sm md:text-lg">{name}</h1>
+                ))}
+            </div>
             
+            {Array.from({ length: 6 }).map((_, rowIndex) => (
+                <div key={rowIndex} className="grid grid-cols-5 gap-2 mb-2 max-w-[97vw]">
+                {categories.map((_, colIndex) => (
+                    <div 
+                    key={colIndex} 
+                    className="border-2 border-gray-400 rounded-s p-2 h-20 flex items-center justify-center duration-500"
+                    >
+                    </div>
+                ))}
+                </div>
+            ))}
+
+            <div className="flex items-center justify-center">
+                <div className="grid">
+                    <div className="relative">
+                        <input
+                        type="text"
+                        placeholder="Enter name..."
+                        value={inputValue}
+                        onChange={handleInputChange}
+                        className="box border-2 border-gray-400 rounded-md text-2xl m-1 duration-500 text-center w-2xl focus:outline-none max-w-[98vw] focus:border-gray-200 transition-all"
+                        onFocus={() => setVisible(true)}
+                        onBlur={() => setTimeout(() => setVisible(false), 200)}
+                        />
+                        
+                        <div className={`
+                            absolute z-10 mt-1 w-full bg-[#171717] shadow-lg rounded-md duration-300
+                            transition-all origin-top no-scrollbar
+                            ${isVisible ? 
+                                'opacity-100 scale-y-100' : 
+                                'opacity-0 scale-y-95 pointer-events-none'
+                            }
+                            overflow-y-auto max-h-50
+                            border border-gray-200
+                        `}>
+                            <ul className="divide-y divide-gray-200">
+                            {items
+                                .filter(item => item.toUpperCase().includes(inputValue.toUpperCase()))
+                                .map((item, index) => (
+                                <li 
+                                    key={index} 
+                                    onClick={() => handleItemClick(item)}
+                                    className="px-4 py-2 hover:bg-gray-200 hover:text-[#171717] cursor-pointer transition-colors duration-500 max-w-[98vw]"
+                                >
+                                    {item}
+                                </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                    <button className="box border-2 border-gray-400 rounded-md text-2xl font-bold m-1 duration-500 text-center w-2xl hover:bg-gray-200 hover:text-[#121213]">SUBMIT</button>
+                    <h1 className="flex items-center justify-center text-center">Target: Name: {target?.Name} Gender: {target?.Gender} Age: {target?.Age} Popularity: {target?.Popularity} Followers: {target?.Followers}</h1>
+                </div>
+            </div>
         </div>
-    );
+    )
 }
