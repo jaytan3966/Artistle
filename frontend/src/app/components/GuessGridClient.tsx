@@ -1,5 +1,5 @@
 "use client"
-export const categories = ["Name", "Gender", "Age", "Popularity", "Followers"];
+const categories = ["Name", "Gender", "Age", "Popularity", "Followers"];
 import { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
 interface artistInfo{
     Name: string,
