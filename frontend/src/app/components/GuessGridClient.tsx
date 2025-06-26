@@ -1,29 +1,7 @@
 "use client"
 const categories = ["Name", "Gender", "Age", "Popularity", "Followers"];
 import { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
-interface artistInfo{
-    Name: string,
-    Gender: string,
-    Age: number,
-    Popularity: number,
-    Followers: number
-}
-interface GuessGridClientProps {
-  target: artistInfo;
-}
-interface comparisonInfo{
-    Name: string,
-    Gender: string,
-    Age: string,
-    Popularity: string,
-    Followers: string
-}
-interface guessInfo{
-    comparisons: comparisonInfo,
-    correct: boolean,
-    guess_count: number,
-    guess_info: artistInfo
-}
+import { GuessGridClientProps, guessInfo } from "./Interfaces";
 
 export default function GuessGridClient({target}: GuessGridClientProps){
     const [inputValue, setInputValue] = useState('');
