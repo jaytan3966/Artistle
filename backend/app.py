@@ -8,7 +8,6 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-
 df = pd.read_csv("Artists.csv") 
 df = df.drop(['ID', 'Genres'], axis=1)
 df = df.replace(0, None)
@@ -36,20 +35,18 @@ def get_artistle():
 def check_guess():
     data = request.json
     target_artist = data['target']
-    guess = data['guess']
-    guess_count = data.get('guessCount', 0)
-    
-    if guess.lower() == target_artist["Name"]:
-        return jsonify({"correct": True})
+    guess = data['guess'].lower()
+    guess_count = data['guessCount']
     
     guess_index = sorted_df.index[sorted_df["Name"] == guess].tolist()[0]
     guess_info = sorted_df.iloc[guess_index]
-    
+
     comparisons = {
-        "Gender": 0 if guess_info["Gender"] == target_artist["Gender"] else 3,
-        "Age": compare_values(guess_info["Age"], target_artist["Age"]),
-        "Popularity": compare_values(guess_info["Popularity"], target_artist["Popularity"]),
-        "Followers": compare_values(guess_info["Followers"], target_artist["Followers"])
+        "Name" : 'bg-gray-600',
+        "Gender": 'bg-green-600' if guess_info["Gender"] == target_artist["Gender"] else 'bg-gray-600',
+        "Age": 'bg-green-600' if abs(guess_info["Age"] - target_artist["Age"]) == 0 else 'bg-yellow-500' if abs(guess_info["Age"] - target_artist["Age"]) < 10 else 'bg-gray-600',
+        "Popularity": 'bg-green-600' if abs(guess_info["Popularity"] - target_artist["Popularity"]) == 0 else 'bg-yellow-500' if abs(guess_info["Popularity"] - target_artist["Popularity"]) < 10 else 'bg-gray-600',
+        "Followers": 'bg-green-400' if abs(guess_info["Followers"] - target_artist["Followers"]) == 0 else 'bg-yellow-500' if abs(guess_info["Followers"] - target_artist["Followers"]) < 10000 else 'bg-gray-600',
     }
     
     return jsonify({
@@ -58,12 +55,6 @@ def check_guess():
         "comparisons": comparisons,
         "guess_count": guess_count + 1
     })
-
-def compare_values(guess_val, target_val):
-    diff = guess_val - target_val
-    if diff == 0:
-        return 0
-    return 1 if diff > 0 else 2
 
 if __name__ == '__main__':
     app.run(port=5050, debug=True)
