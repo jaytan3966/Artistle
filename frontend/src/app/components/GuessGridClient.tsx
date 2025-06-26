@@ -36,9 +36,9 @@ export default function GuessGridClient({target}: GuessGridClientProps){
     const [flippedRow, setFlippedRow] = useState<number | null>(null);
 
     useEffect(() => {
-    if (guesses.length >= 0) {
-        setFlippedRow(guesses.length);
-    }
+        if (guesses.length >= 0) {
+            setFlippedRow(guesses.length);
+        }
     }, [guesses]);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -145,17 +145,16 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                 return (
                     <div
                     key={colIndex}
-                    className="perspective-1000 w-full h-20 border-2 border-gray-800 rounded-s relative"
-                    >
+                    className="perspective-1000 w-full h-20 border-2 border-gray-800 rounded-s relative">
                         <div
                             className={`w-full h-full transition-transform duration-1000 transform-style-3d relative ${
-                            shouldFlip ? 'rotate-y-180' : ''
+                            shouldFlip ? 'rotate-x-90' : ''
                             }`}
                         >
                             <div className={`absolute w-full h-full backface-hidden flex items-center justify-center font-bold ${bgClassSafe(guesses[rowIndex]?.comparisons[key])} `}>
                             {content}
                             </div>
-                            <div className="absolute w-full h-full backface-hidden transform rotate-y-180 flex items-center justify-center"></div>
+                            <div className="absolute w-full h-full backface-hidden transform flex items-center justify-center"></div>
                         </div>
                     </div>
                 );
@@ -175,7 +174,6 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                         onFocus={() => setVisible(true)}
                         onBlur={() => setTimeout(() => setVisible(false), 500)}
                         onKeyDown={handleKeyDown}
-                        
                         />
                         
                         <div className={`
