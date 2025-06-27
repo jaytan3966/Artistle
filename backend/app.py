@@ -4,6 +4,7 @@ import pandas as pd
 from upstash_redis import Redis
 from dotenv import load_dotenv
 import os
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -31,6 +32,15 @@ def get_artistle():
     response.headers['Cache-Control'] = 'public, max-age=86400'
     return response
 
+@app.route('/api/getTodays')
+def get_today():
+    player = request.args.get('param')
+    todaysGuesses = r.get(player)
+    if todaysGuesses:
+        guesses = json.loads(todaysGuesses)
+        return jsonify({"guesses": guesses})
+    return jsonify({"guesses": []})
+
 @app.route('/api/check', methods=['POST'])
 def check_guess():
     data = request.json
@@ -55,6 +65,16 @@ def check_guess():
         "comparisons": comparisons,
         "guess_count": guess_count + 1
     })
+
+@app.route('/api/todaysGuesses', methods=['POST'])
+def todays_guesses():
+    data = request.json
+    playerId = data['playerId']
+    guesses = json.dumps(data['guesses'])
+    ttl = data['ttl']
+    response = r.set(playerId, guesses)
+    response = r.expire(playerId, ttl)
+    return jsonify({"resp" : response})
 
 if __name__ == '__main__':
     app.run(port=5050, debug=True)

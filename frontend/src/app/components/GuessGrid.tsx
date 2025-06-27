@@ -1,6 +1,6 @@
 import GuessGridClient from "./GuessGridClient";
 
-function getSecondsToLocalMidnight() {
+export function getSecondsToLocalMidnight() {
   const now = new Date();
   const midnight = new Date();
   

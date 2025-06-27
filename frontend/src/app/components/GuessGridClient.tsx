@@ -1,17 +1,45 @@
 "use client"
 const categories = ["Name", "Gender", "Age", "Popularity", "Followers"];
 import { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
-import { GuessGridClientProps, guessInfo } from "./Interfaces";
+import { GuessGridClientProps, guessInfo} from "./Interfaces";
+import { getSecondsToLocalMidnight } from "./GuessGrid";
+import { useUser } from "@auth0/nextjs-auth0";
 
 export default function GuessGridClient({target}: GuessGridClientProps){
     const [inputValue, setInputValue] = useState('');
-    const [isVisible, setVisible] = useState(false);
+   
+    const items = ['TAYLOR SWIFT', 'DRAKE', 'BAD BUNNY', 'THE WEEKND', 'TRAVIS SCOTT', 'LANA DEL REY', 'JUNG KOOK', 'FEID', 'JUSTIN BIEBER', 'ARIANA GRANDE', '21 SAVAGE', 'ARIJIT SINGH', 'KAROL G', 'SZA', 'OLIVIA RODRIGO', 'ED SHEERAN', 'COLDPLAY', 'BRUNO MARS', 'DOJA CAT', 'KENDRICK LAMAR', 'POST MALONE', 'CHRIS BROWN', 'BILLIE EILISH', 'METRO BOOMIN', 'JUICE WRLD', 'DUA LIPA', 'J. COLE', 'ANUEL AA', 'IMAGINE DRAGONS', 'BTS', 'PRITAM', 'MYKE TOWERS', 'DAVID GUETTA', 'MORGAN WALLEN', 'TATE MCRAE', 'SIA', 'BEYONCÉ', 'MICHAEL BUBLÉ', 'DADDY YANKEE', 'ARCTIC MONKEYS', 'XXXTENTACION', 'SHAKIRA', 'OZUNA', 'ANIRUDH RAVICHANDER', 'NOAH KAHAN', 'LINKIN PARK', 'THE BEATLES', 'JACK HARLOW', 'ADELE', 'MALUMA', 'PLAYBOI CARTI', 'HARRY STYLES', 'TYLER, THE CREATOR', 'MARIAH CAREY', 'CALVIN HARRIS', 'GUNNA', 'SAM SMITH', 'MAROON 5', 'LIL UZI VERT', 'MARSHMELLO', 'J BALVIN', 'QUEEN', 'KATY PERRY', 'YOUNG THUG', 'LADY GAGA', 'BRENT FAIYAZ', 'THE NEIGHBOURHOOD', 'ARCÁNGEL', 'STRAY KIDS', 'KALI UCHIS', 'FRANK SINATRA', 'LUKE COMBS', 'LIL PEEP', 'HOZIER', 'MAC MILLER', 'HENRIQUE & JULIANO', 'LUIS MIGUEL', 'JIMIN', 'JAY-Z', 'SFERA EBBASTA', 'RED HOT CHILI PEPPERS', 'SHAWN MENDES', 'SELENA GOMEZ', 'BLACKPINK', 'TIËSTO', '50 CENT', 'ELTON JOHN', 'KHALID', 'ONE DIRECTION', 'DON OMAR', 'SHREYA GHOSHAL', 'FARRUKO', 'STEVE LACY', 'A$AP ROCKY', 'PITBULL', 'MORAT', 'ROMEO SANTOS', 'JAMES ARTHUR', 'LIL DURK', 'ONEREPUBLIC', 'MICHAEL JACKSON', 'TORY LANEZ', 'THE KID LAROI', 'SNOOP DOGG', 'LIL TECCA', 'GUSTTAVO LIMA', 'P!NK', 'TROYE SIVAN', 'BRYANT MYERS', 'WIZ KHALIFA', 'TRIPPIE REDD', 'KELLY CLARKSON', 'POP SMOKE', 'BRITNEY SPEARS', 'GREEN DAY', 'HALSEY', 'RADIOHEAD', 'NIRVANA', 'CHARLIE PUTH', 'AKON', 'ELVIS PRESLEY', 'FLEETWOOD MAC', 'KODAK BLACK', 'JUSTIN TIMBERLAKE', 'USHER', 'ALAN WALKER', 'DAFT PUNK', 'SABRINA CARPENTER', 'CHRIS STAPLETON', 'MELANIE MARTINEZ', 'KID CUDI', 'SEVENTEEN', 'ROSALÍA', 'ÑENGO FLOW', 'EMILIA', 'AC/DC', 'MADONNA', 'JUL', 'NF', 'BING CROSBY', 'PENTATONIX', 'RAYE', 'DEAN MARTIN', 'NLE CHOPPA', 'CHRISTIAN NODAL', 'NAT KING COLE', 'CHENCHO CORLEONE', 'BRYSON TILLER', 'ALKA YAGNIK', 'THE CHAINSMOKERS', 'TWENTY ONE PILOTS', 'TY DOLLA $IGN', 'NICKY JAM', 'A BOOGIE WIT DA HOODIE', 'SEBASTIAN YATRA', 'CAMILA CABELLO', 'SEAN PAUL', 'AVICII', 'LEWIS CAPALDI', 'MARÍLIA MENDONÇA', 'BEBE REXHA', 'NICKI NICOLE', 'UDIT NARAYAN', 'ABBA', 'THE ROLLING STONES', 'CHILDISH GAMBINO', 'CHASE ATLANTIC', 'TINI', 'JULIÓN ÁLVAREZ Y SU NORTEÑO BANDA', 'SUMMER WALKER', 'ALOK', 'ZÉ NETO & CRISTIANO', 'BECKY G', '2PAC', 'A.R. RAHMAN', "GUNS N' ROSES", 'DABABY', 'TYGA', 'NE-YO', 'PARTYNEXTDOOR', 'RAMMSTEIN', 'AVA MAX', 'QUAVO', 'TWICE', 'BLINK-182', 'SECH', 'CREEDENCE CLEARWATER REVIVAL', 'TAME IMPALA', 'WISIN & YANDEL', 'TAINY', 'PINK FLOYD', 'MIGUEL', 'LIL TJAY', 'LIL YACHTY', 'WHAM!', 'SYSTEM OF A DOWN', 'CARDI B', 'DR. DRE', 'BLACK EYED PEAS', 'MEGHAN TRAINOR', 'PLAN B', 'FALL OUT BOY', 'CHINO PACAS', 'YANDEL', 'SLIPKNOT', 'DEMI LOVATO', 'JONAS BROTHERS', 'MATHEUS & KAUAN', 'NINHO', 'JID', 'MANÁ', 'REIK', 'PARAMORE', 'JHENÉ AIKO', 'PHARRELL WILLIAMS', 'FLO RIDA', 'GORILLAZ', 'SIMONE MENDES', 'BON JOVI', 'LABRINTH', 'AVENTURA', 'U2', 'BOB MARLEY & THE WAILERS', 'TOMORROW X TOGETHER', 'JASON DERULO', 'FOO FIGHTERS', 'BABY KEEM', 'CAMILO', 'ANDY WILLIAMS', 'BRING ME THE HORIZON', 'DJ SNAKE', 'ENRIQUE IGLESIAS', 'DJ LUIAN', 'LUAN SANTANA', 'KYGO', 'TOM ODELL', 'DAVID KUSHNER', 'KACEY MUSGRAVES', 'LOST FREQUENCIES', 'ALICIA KEYS', 'THE NOTORIOUS B.I.G.', 'OSCAR MAYDON', 'THE 1975', 'RODDY RICCH', '5 SECONDS OF SUMMER', 'MACHINE GUN KELLY', 'CARTEL DE SANTA', 'JUSTIN QUILES', 'LUÍSA SONZA', 'ANDERSON .PAAK', 'TIMBALAND', 'JOHANN SEBASTIAN BACH', 'DAVID BOWIE', 'CHRISTINA AGUILERA', 'STEVIE WONDER', 'ZARA LARSSON', 'LENNY TAVÁREZ', 'DANNY OCEAN', 'JOHN MAYER', 'MACKLEMORE', 'DE LA GHETTO', 'T-PAIN', 'JOHN WILLIAMS', 'JOHN LEGEND', 'BEE GEES', 'PANIC! AT THE DISCO', 'ROBIN SCHULZ', 'THE KILLERS', 'EL ALFA', '2 CHAINZ', 'ALEC BENJAMIN', 'NATE DOGG', '(G)I-DLE', 'FLORENCE + THE MACHINE', 'EAGLES', 'BRUCE SPRINGSTEEN', 'BON IVER', 'BILLY JOEL', 'TITO DOUBLE P', 'SHIVA', 'LOS ÁNGELES AZULES', 'WHITNEY HOUSTON', 'LUDACRIS', 'RUSS', 'SHILPA RAO', 'LUDMILLA', 'ZAYN', 'DILJIT DOSANJH', 'ZION & LENNOX', 'SONU NIGAM', 'KUMAR SANU', 'DJ KHALED', 'NELLY FURTADO', 'NICKELBACK', 'ATIF ASLAM', 'MARC ANTHONY', 'JUANES', 'YO YO HONEY SINGH', 'DEAN LEWIS', 'JUAN LUIS GUERRA 4.40', 'NIALL HORAN', 'HANS ZIMMER', 'CHIEF KEEF', 'LAUV', 'KESHA', 'SKRILLEX', 'MC KEVIN O CHRIS', 'RICARDO ARJONA', 'OASIS', 'LORDE', 'THE POLICE', 'JOAN SEBASTIAN', 'SID SRIRAM', 'THE CURE', 'LOGIC', 'WESLEY SAFADÃO', 'ALEJANDRO SANZ', 'LUKE BRYAN', 'THE STROKES', 'TULUS', 'MEEK MILL', 'CHARLI XCX', 'DIRE STRAITS', 'LORD HURON', 'LILY-ROSE DEPP', 'MAITE PERRONI', 'SHANKAR MAHADEVAN', 'RAF CAMORA', 'SWEDISH HOUSE MAFIA', 'ALEJANDRO FERNÁNDEZ', 'MUSE', 'BOBBY HELMS', 'AEROSMITH', 'GLASS ANIMALS', 'KING GNU', 'JUAN GABRIEL', 'IVAN CORNEJO', 'MONEYBAGG YO', 'PAUL MCCARTNEY', 'PHIL COLLINS', 'UZI', 'DARYL HALL & JOHN OATES', 'BONEZ MC', 'MARRACASH', 'ELLA FITZGERALD', 'PRINCE ROYCE', 'BLACKBEAR', 'TEDUA', 'G-EAZY', 'CALUM SCOTT', 'BRYAN ADAMS', 'KIM PETRAS', 'AMY WINEHOUSE', 'NORIEL', 'ANAHÍ', 'MRS. GREEN APPLE', 'R3HAB', 'AVRIL LAVIGNE', 'H.E.R.', 'VANCE JOY', 'CÉLINE DION', 'YUVAN SHANKAR RAJA', 'BACKSTREET BOYS', 'GHOST', 'JACK JOHNSON', 'MARTIN GARRIX', 'MARCO ANTONIO SOLÍS', 'BRYTIAGO', 'BASTILLE', 'MARVIN GAYE', 'LAZZA', 'RYAN LEWIS', 'T.I.', 'FELIX JAEHN', 'OUTKAST', 'EMPIRE OF THE SUN', 'PEARL JAM', 'THE CRANBERRIES', 'MOHIT CHAUHAN', 'ELLEY DUHÉ', 'OROCHI', 'ALEMÁN', 'FMK', 'HARDY', 'SODA STEREO', 'CALIBRE 50', 'MELENDI', 'RED VELVET', 'KINGS OF LEON', 'DOLLY PARTON', 'HA*ASH', 'THE BEACH BOYS', 'DALEX', 'AGUST D', 'KYLIE MINOGUE', 'PERRY COMO', 'JULIA MICHAELS', 'THE RONETTES', 'PNL', 'ROBBIE WILLIAMS', 'GUSTAVO MIOTO', 'SUNIDHI CHAUHAN', 'CHARLIE BROWN JR.', 'JULIETA VENEGAS', 'NELLY', 'ALESSIA CARA', 'MON LAFERTE', 'JOHN LENNON', 'WOLFGANG AMADEUS MOZART', 'LITTLE MIX', 'JENNIFER LOPEZ', 'KHEA', 'AITANA', 'ALESSO', 'BURL IVES', 'ARMIN VAN BUUREN', 'JONAS BLUE', '6LACK', 'DAMSO', 'SORRISO MAROTO', 'GUÈ', 'VISHAL DADLANI', 'JOSÉ FELICIANO', 'SEZEN AKSU', 'LA OREJA DE VAN GOGH', 'MARK RONSON', 'FUJII KAZE', 'LIZZO', 'DISTURBED', 'NATALIA LAFOURCADE', '*NSYNC', 'RUTH B.', 'JUNGLE', 'YNW MELLY', 'TRAIN', 'TOVE LO', 'GEORGE MICHAEL', 'TOPIC', 'PUSHA T', 'PABLO ALBORÁN', 'BRONCO', 'CLEAN BANDIT', 'JAY CHOU', 'SKI MASK THE SLUMP GOD', 'RAHAT FATEH ALI KHAN', 'LUIS FONSI', 'SKEPTA', 'WILL.I.AM', 'THE JACKSON 5', 'R.E.M.', 'JUICY J', 'COSCULLUELA', 'HINDIA', 'BECKY HILL', 'FLORIDA GEORGIA LINE', 'JASON ALDEAN', 'JEREMIH', 'KISHORE KUMAR', 'DIDDY', 'BACK NUMBER', 'JOURNEY', 'CARLOS RIVERA', 'LANY', 'AURORA', 'GLORIA TREVI', 'BILL WITHERS', 'B.O.B', 'BLAKE SHELTON', 'YG', 'CARLOS VIVES', 'JOHNNY CASH', 'KEHLANI', 'TOTO', 'BUSTA RHYMES', 'GIMS', 'JOEY BADA$$', 'JORJA SMITH', 'DILSINHO', 'JESSIE MURPH', 'FIVE FINGER DEATH PUNCH', 'KEANE', 'GEORGE EZRA', 'NORAH JONES', 'SHANIA TWAIN', 'GERARDO ORTIZ', 'CHAYANNE', 'JAY ROCK', 'GABRY PONTE', 'NATTI NATASHA', 'MUMFORD & SONS', 'DERMOT KENNEDY', 'DJ NELSON', 'YURIDIA', 'DANNA PAOLA', 'ITZY', 'GESAFFELSTEIN', 'WEEZER', 'SOOLKING', 'CARLY RAE JEPSEN', 'LA ADICTIVA']
+    const [guesses, setGuesses] = useState<guessInfo[]>([]);
     const [count, setCount] = useState(0);
     const [win, setWin] = useState(false);
-    const items = ['TAYLOR SWIFT', 'DRAKE', 'BAD BUNNY', 'THE WEEKND', 'TRAVIS SCOTT', 'LANA DEL REY', 'JUNG KOOK', 'FEID', 'JUSTIN BIEBER', 'ARIANA GRANDE', '21 SAVAGE', 'ARIJIT SINGH', 'KAROL G', 'SZA', 'OLIVIA RODRIGO', 'ED SHEERAN', 'COLDPLAY', 'BRUNO MARS', 'DOJA CAT', 'KENDRICK LAMAR', 'POST MALONE', 'CHRIS BROWN', 'BILLIE EILISH', 'METRO BOOMIN', 'JUICE WRLD', 'DUA LIPA', 'J. COLE', 'ANUEL AA', 'IMAGINE DRAGONS', 'BTS', 'PRITAM', 'MYKE TOWERS', 'DAVID GUETTA', 'MORGAN WALLEN', 'TATE MCRAE', 'SIA', 'BEYONCÉ', 'MICHAEL BUBLÉ', 'DADDY YANKEE', 'ARCTIC MONKEYS', 'XXXTENTACION', 'SHAKIRA', 'OZUNA', 'ANIRUDH RAVICHANDER', 'NOAH KAHAN', 'LINKIN PARK', 'THE BEATLES', 'JACK HARLOW', 'ADELE', 'MALUMA', 'PLAYBOI CARTI', 'HARRY STYLES', 'TYLER, THE CREATOR', 'MARIAH CAREY', 'CALVIN HARRIS', 'GUNNA', 'SAM SMITH', 'MAROON 5', 'LIL UZI VERT', 'MARSHMELLO', 'J BALVIN', 'QUEEN', 'KATY PERRY', 'YOUNG THUG', 'LADY GAGA', 'BRENT FAIYAZ', 'THE NEIGHBOURHOOD', 'ARCÁNGEL', 'STRAY KIDS', 'KALI UCHIS', 'FRANK SINATRA', 'LUKE COMBS', 'LIL PEEP', 'HOZIER', 'MAC MILLER', 'HENRIQUE & JULIANO', 'LUIS MIGUEL', 'JIMIN', 'JAY-Z', 'SFERA EBBASTA', 'RED HOT CHILI PEPPERS', 'SHAWN MENDES', 'SELENA GOMEZ', 'BLACKPINK', 'TIËSTO', '50 CENT', 'ELTON JOHN', 'KHALID', 'ONE DIRECTION', 'DON OMAR', 'SHREYA GHOSHAL', 'FARRUKO', 'STEVE LACY', 'A$AP ROCKY', 'PITBULL', 'MORAT', 'ROMEO SANTOS', 'JAMES ARTHUR', 'LIL DURK', 'ONEREPUBLIC', 'MICHAEL JACKSON', 'TORY LANEZ', 'THE KID LAROI', 'SNOOP DOGG', 'LIL TECCA', 'GUSTTAVO LIMA', 'P!NK', 'TROYE SIVAN', 'BRYANT MYERS', 'WIZ KHALIFA', 'TRIPPIE REDD', 'KELLY CLARKSON', 'POP SMOKE', 'BRITNEY SPEARS', 'GREEN DAY', 'HALSEY', 'RADIOHEAD', 'NIRVANA', 'CHARLIE PUTH', 'AKON', 'ELVIS PRESLEY', 'FLEETWOOD MAC', 'KODAK BLACK', 'JUSTIN TIMBERLAKE', 'USHER', 'ALAN WALKER', 'DAFT PUNK', 'SABRINA CARPENTER', 'CHRIS STAPLETON', 'MELANIE MARTINEZ', 'KID CUDI', 'SEVENTEEN', 'ROSALÍA', 'ÑENGO FLOW', 'EMILIA', 'AC/DC', 'MADONNA', 'JUL', 'NF', 'BING CROSBY', 'PENTATONIX', 'RAYE', 'DEAN MARTIN', 'NLE CHOPPA', 'CHRISTIAN NODAL', 'NAT KING COLE', 'CHENCHO CORLEONE', 'BRYSON TILLER', 'ALKA YAGNIK', 'THE CHAINSMOKERS', 'TWENTY ONE PILOTS', 'TY DOLLA $IGN', 'NICKY JAM', 'A BOOGIE WIT DA HOODIE', 'SEBASTIAN YATRA', 'CAMILA CABELLO', 'SEAN PAUL', 'AVICII', 'LEWIS CAPALDI', 'MARÍLIA MENDONÇA', 'BEBE REXHA', 'NICKI NICOLE', 'UDIT NARAYAN', 'ABBA', 'THE ROLLING STONES', 'CHILDISH GAMBINO', 'CHASE ATLANTIC', 'TINI', 'JULIÓN ÁLVAREZ Y SU NORTEÑO BANDA', 'SUMMER WALKER', 'ALOK', 'ZÉ NETO & CRISTIANO', 'BECKY G', '2PAC', 'A.R. RAHMAN', "GUNS N' ROSES", 'DABABY', 'TYGA', 'NE-YO', 'PARTYNEXTDOOR', 'RAMMSTEIN', 'AVA MAX', 'QUAVO', 'TWICE', 'BLINK-182', 'SECH', 'CREEDENCE CLEARWATER REVIVAL', 'TAME IMPALA', 'WISIN & YANDEL', 'TAINY', 'PINK FLOYD', 'MIGUEL', 'LIL TJAY', 'LIL YACHTY', 'WHAM!', 'SYSTEM OF A DOWN', 'CARDI B', 'DR. DRE', 'BLACK EYED PEAS', 'MEGHAN TRAINOR', 'PLAN B', 'FALL OUT BOY', 'CHINO PACAS', 'YANDEL', 'SLIPKNOT', 'DEMI LOVATO', 'JONAS BROTHERS', 'MATHEUS & KAUAN', 'NINHO', 'JID', 'MANÁ', 'REIK', 'PARAMORE', 'JHENÉ AIKO', 'PHARRELL WILLIAMS', 'FLO RIDA', 'GORILLAZ', 'SIMONE MENDES', 'BON JOVI', 'LABRINTH', 'AVENTURA', 'U2', 'BOB MARLEY & THE WAILERS', 'TOMORROW X TOGETHER', 'JASON DERULO', 'FOO FIGHTERS', 'BABY KEEM', 'CAMILO', 'ANDY WILLIAMS', 'BRING ME THE HORIZON', 'DJ SNAKE', 'ENRIQUE IGLESIAS', 'DJ LUIAN', 'LUAN SANTANA', 'KYGO', 'TOM ODELL', 'DAVID KUSHNER', 'KACEY MUSGRAVES', 'LOST FREQUENCIES', 'ALICIA KEYS', 'THE NOTORIOUS B.I.G.', 'OSCAR MAYDON', 'THE 1975', 'RODDY RICCH', '5 SECONDS OF SUMMER', 'MACHINE GUN KELLY', 'CARTEL DE SANTA', 'JUSTIN QUILES', 'LUÍSA SONZA', 'ANDERSON .PAAK', 'TIMBALAND', 'JOHANN SEBASTIAN BACH', 'DAVID BOWIE', 'CHRISTINA AGUILERA', 'STEVIE WONDER', 'ZARA LARSSON', 'LENNY TAVÁREZ', 'DANNY OCEAN', 'JOHN MAYER', 'MACKLEMORE', 'DE LA GHETTO', 'T-PAIN', 'JOHN WILLIAMS', 'JOHN LEGEND', 'BEE GEES', 'PANIC! AT THE DISCO', 'ROBIN SCHULZ', 'THE KILLERS', 'EL ALFA', '2 CHAINZ', 'ALEC BENJAMIN', 'NATE DOGG', '(G)I-DLE', 'FLORENCE + THE MACHINE', 'EAGLES', 'BRUCE SPRINGSTEEN', 'BON IVER', 'BILLY JOEL', 'TITO DOUBLE P', 'SHIVA', 'LOS ÁNGELES AZULES', 'WHITNEY HOUSTON', 'LUDACRIS', 'RUSS', 'SHILPA RAO', 'LUDMILLA', 'ZAYN', 'DILJIT DOSANJH', 'ZION & LENNOX', 'SONU NIGAM', 'KUMAR SANU', 'DJ KHALED', 'NELLY FURTADO', 'NICKELBACK', 'ATIF ASLAM', 'MARC ANTHONY', 'JUANES', 'YO YO HONEY SINGH', 'DEAN LEWIS', 'JUAN LUIS GUERRA 4.40', 'NIALL HORAN', 'HANS ZIMMER', 'CHIEF KEEF', 'LAUV', 'KESHA', 'SKRILLEX', 'MC KEVIN O CHRIS', 'RICARDO ARJONA', 'OASIS', 'LORDE', 'THE POLICE', 'JOAN SEBASTIAN', 'SID SRIRAM', 'THE CURE', 'LOGIC', 'WESLEY SAFADÃO', 'ALEJANDRO SANZ', 'LUKE BRYAN', 'THE STROKES', 'TULUS', 'MEEK MILL', 'CHARLI XCX', 'DIRE STRAITS', 'LORD HURON', 'LILY-ROSE DEPP', 'MAITE PERRONI', 'SHANKAR MAHADEVAN', 'RAF CAMORA', 'SWEDISH HOUSE MAFIA', 'ALEJANDRO FERNÁNDEZ', 'MUSE', 'BOBBY HELMS', 'AEROSMITH', 'GLASS ANIMALS', 'KING GNU', 'JUAN GABRIEL', 'IVAN CORNEJO', 'MONEYBAGG YO', 'PAUL MCCARTNEY', 'PHIL COLLINS', 'UZI', 'DARYL HALL & JOHN OATES', 'BONEZ MC', 'MARRACASH', 'ELLA FITZGERALD', 'PRINCE ROYCE', 'BLACKBEAR', 'TEDUA', 'G-EAZY', 'CALUM SCOTT', 'BRYAN ADAMS', 'KIM PETRAS', 'AMY WINEHOUSE', 'NORIEL', 'ANAHÍ', 'MRS. GREEN APPLE', 'R3HAB', 'AVRIL LAVIGNE', 'H.E.R.', 'VANCE JOY', 'CÉLINE DION', 'YUVAN SHANKAR RAJA', 'BACKSTREET BOYS', 'GHOST', 'JACK JOHNSON', 'MARTIN GARRIX', 'MARCO ANTONIO SOLÍS', 'BRYTIAGO', 'BASTILLE', 'MARVIN GAYE', 'LAZZA', 'RYAN LEWIS', 'T.I.', 'FELIX JAEHN', 'OUTKAST', 'EMPIRE OF THE SUN', 'PEARL JAM', 'THE CRANBERRIES', 'MOHIT CHAUHAN', 'ELLEY DUHÉ', 'OROCHI', 'ALEMÁN', 'FMK', 'HARDY', 'SODA STEREO', 'CALIBRE 50', 'MELENDI', 'RED VELVET', 'KINGS OF LEON', 'DOLLY PARTON', 'HA*ASH', 'THE BEACH BOYS', 'DALEX', 'AGUST D', 'KYLIE MINOGUE', 'PERRY COMO', 'JULIA MICHAELS', 'THE RONETTES', 'PNL', 'ROBBIE WILLIAMS', 'GUSTAVO MIOTO', 'SUNIDHI CHAUHAN', 'CHARLIE BROWN JR.', 'JULIETA VENEGAS', 'NELLY', 'ALESSIA CARA', 'MON LAFERTE', 'JOHN LENNON', 'WOLFGANG AMADEUS MOZART', 'LITTLE MIX', 'JENNIFER LOPEZ', 'KHEA', 'AITANA', 'ALESSO', 'BURL IVES', 'ARMIN VAN BUUREN', 'JONAS BLUE', '6LACK', 'DAMSO', 'SORRISO MAROTO', 'GUÈ', 'VISHAL DADLANI', 'JOSÉ FELICIANO', 'SEZEN AKSU', 'LA OREJA DE VAN GOGH', 'MARK RONSON', 'FUJII KAZE', 'LIZZO', 'DISTURBED', 'NATALIA LAFOURCADE', '*NSYNC', 'RUTH B.', 'JUNGLE', 'YNW MELLY', 'TRAIN', 'TOVE LO', 'GEORGE MICHAEL', 'TOPIC', 'PUSHA T', 'PABLO ALBORÁN', 'BRONCO', 'CLEAN BANDIT', 'JAY CHOU', 'SKI MASK THE SLUMP GOD', 'RAHAT FATEH ALI KHAN', 'LUIS FONSI', 'SKEPTA', 'WILL.I.AM', 'THE JACKSON 5', 'R.E.M.', 'JUICY J', 'COSCULLUELA', 'HINDIA', 'BECKY HILL', 'FLORIDA GEORGIA LINE', 'JASON ALDEAN', 'JEREMIH', 'KISHORE KUMAR', 'DIDDY', 'BACK NUMBER', 'JOURNEY', 'CARLOS RIVERA', 'LANY', 'AURORA', 'GLORIA TREVI', 'BILL WITHERS', 'B.O.B', 'BLAKE SHELTON', 'YG', 'CARLOS VIVES', 'JOHNNY CASH', 'KEHLANI', 'TOTO', 'BUSTA RHYMES', 'GIMS', 'JOEY BADA$$', 'JORJA SMITH', 'DILSINHO', 'JESSIE MURPH', 'FIVE FINGER DEATH PUNCH', 'KEANE', 'GEORGE EZRA', 'NORAH JONES', 'SHANIA TWAIN', 'GERARDO ORTIZ', 'CHAYANNE', 'JAY ROCK', 'GABRY PONTE', 'NATTI NATASHA', 'MUMFORD & SONS', 'DERMOT KENNEDY', 'DJ NELSON', 'YURIDIA', 'DANNA PAOLA', 'ITZY', 'GESAFFELSTEIN', 'WEEZER', 'SOOLKING', 'CARLY RAE JEPSEN', 'LA ADICTIVA']
     
-    const [guesses, setGuesses] = useState<guessInfo[]>([]);
     const [flippedRow, setFlippedRow] = useState<number | null>(null);
+    const [isVisible, setVisible] = useState(false);
+
+    const {user} = useUser();
+
+    useEffect(() => {
+        
+        const checkPast = async (playerId : string | undefined) => {
+            if (playerId){
+                try {
+                    const response = await fetch(`http://localhost:5050/api/getTodays?param=${playerId}`);
+                    const result = await response.json();
+                    if (result.guesses.length > 0){
+                        setGuesses(result.guesses);
+                        setCount(result.guesses.length);
+                        if(result.guesses.at(result.guesses.length-1).correct){
+                            setWin(true);
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+        }
+        checkPast(user?.sub);
+        
+    }, [user?.sub])
 
     useEffect(() => {
         if (guesses.length >= 0) {
@@ -33,6 +61,28 @@ export default function GuessGridClient({target}: GuessGridClientProps){
         setInputValue(item);
         setVisible(false);
     }
+    const submitGuess = async (playerId : string | undefined, guesses: guessInfo[]) => {
+        if (playerId){
+            try {
+                const response = await fetch('http://localhost:5050/api/todaysGuesses', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }, 
+                    body:JSON.stringify({
+                        playerId: playerId,
+                        guesses: guesses,
+                        ttl: getSecondsToLocalMidnight()
+                    }),
+                });
+                const resp = await response.json();
+                return resp;
+            } catch (err) {
+                console.error(err)
+            }
+        }
+    }
+            
     const submit = async () => {
         if (count > 5 || win){
             setInputValue('');
@@ -40,8 +90,12 @@ export default function GuessGridClient({target}: GuessGridClientProps){
         }
         if (inputValue.toUpperCase() === target.Name.toUpperCase()){
             const result = {"correct": true, "guess_info": target, "comparisons": {"Name" : 'bg-green-600', 'Gender': 'bg-green-600', "Age": 'bg-green-600', 'Popularity': 'bg-green-600', "Followers": 'bg-green-600'}, "guess_count":count+1}
-            setCount(count+1);
-            setGuesses(prevGuesses => [...prevGuesses, result]);
+            const prevGuesses = [...guesses, result];
+
+            setGuesses(prevGuesses);
+            setCount(result.guess_count);
+            submitGuess(user?.sub, prevGuesses)
+
             setWin(true);
             setTimeout(() => {
                 if (count === 0){
@@ -58,23 +112,29 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                     alert("Phew!");
                 }
             }, 1500);
+            
         } else {
             try {
                 if (count <= 5 && items.includes(inputValue.toUpperCase())){
                     const response = await fetch('http://localhost:5050/api/check',{
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        guess: inputValue.trim(),
-                        target: target,
-                        guessCount: count
-                    }),
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            guess: inputValue,
+                            target: target,
+                            guessCount: count
+                        }),
                     });
                     const result = await response.json();
-                    setGuesses(prevGuesses => [...prevGuesses, result]);
+
+                    const prevGuesses = [...guesses, result];
+                    setGuesses(prevGuesses);
                     setCount(result.guess_count);
+                    
+                    submitGuess(user?.sub, prevGuesses)
+                    
                     if (count === 5){
                         setTimeout(() => {
                             alert(`Today's Artist: ${target?.Name}\nBetter luck tomorrow!`);
@@ -128,9 +188,9 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                             className={`w-full h-full transition-transform duration-1000 transform-style-3d relative ${
                             shouldFlip ? 'rotate-x-90' : ''
                             }`}
-                        >
-                            <div className={`absolute w-full h-full backface-hidden flex items-center justify-center font-bold ${bgClassSafe(guesses[rowIndex]?.comparisons[key])} `}>
-                            {content}
+                        > 
+                            <div className={`absolute w-full h-full backface-hidden flex items-center justify-center font-bold text-xl text-center ${bgClassSafe(guesses[rowIndex]?.comparisons[key])} `}>
+                                {content}
                             </div>
                             <div className="absolute w-full h-full backface-hidden transform flex items-center justify-center"></div>
                         </div>
@@ -179,7 +239,7 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                             </ul>
                         </div>
                     </div>
-                    <button onClick={submit} className="box border-2 border-gray-600 rounded-md text-2xl font-bold m-1 duration-500 text-center w-2xl hover:bg-gray-200 hover:text-[#121213] hover:border-gray-200 max-w-[98vw]">SUBMIT</button>
+                    <button onClick={() => submit()} className="box border-2 border-gray-600 rounded-md text-2xl font-bold m-1 duration-500 text-center w-2xl hover:bg-gray-200 hover:text-[#121213] hover:border-gray-200 max-w-[98vw]">SUBMIT</button>
                 </div>
             </div>
         </div>
