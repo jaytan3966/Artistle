@@ -45,24 +45,22 @@ def get_today():
 def check_guess():
     data = request.json
     target_artist = data['target']
-    guess = data['guess'].lower()
+    guess = data['guess']
     guess_count = data['guessCount']
-    
     guess_index = sorted_df.index[sorted_df["Name"] == guess].tolist()[0]
     guess_info = sorted_df.iloc[guess_index]
 
     comparisons = {
-        "Name" : 'bg-gray-600',
-        "Gender": 'bg-green-600' if guess_info["Gender"] == target_artist["Gender"] else 'bg-gray-600',
+        "Name" : 'bg-green-600' if guess_info["Name"].upper() == target_artist["Name"] else 'bg-gray-600',
+        "Gender": 'bg-green-600' if guess_info["Gender"].upper() == target_artist["Gender"] else 'bg-gray-600',
         "Age": 'bg-green-600' if abs(guess_info["Age"] - target_artist["Age"]) == 0 else 'bg-yellow-500' if abs(guess_info["Age"] - target_artist["Age"]) < 10 else 'bg-gray-600',
         "Popularity": 'bg-green-600' if abs(guess_info["Popularity"] - target_artist["Popularity"]) == 0 else 'bg-yellow-500' if abs(guess_info["Popularity"] - target_artist["Popularity"]) < 10 else 'bg-gray-600',
-        "Followers": 'bg-green-400' if abs(guess_info["Followers"] - target_artist["Followers"]) == 0 else 'bg-yellow-500' if abs(guess_info["Followers"] - target_artist["Followers"]) < 10000 else 'bg-gray-600',
+        "Followers": 'bg-green-600' if abs(guess_info["Followers"] - target_artist["Followers"]) == 0 else 'bg-yellow-500' if abs(guess_info["Followers"] - target_artist["Followers"]) < 10000 else 'bg-gray-600',
     }
     guess_info = guess_info.to_dict()
-    guess_info['Name'] = guess_info['Name'].upper()
-    guess_info['Gender'] = guess_info['Gender'].upper()
+    
     return jsonify({
-        "correct": False,
+        "correct": guess_info["Name"].upper() == target_artist["Name"],
         "guess_info": guess_info,
         "comparisons": comparisons,
         "guess_count": guess_count + 1

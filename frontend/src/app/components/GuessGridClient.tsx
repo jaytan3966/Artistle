@@ -19,7 +19,6 @@ export default function GuessGridClient({target}: GuessGridClientProps){
     const {user} = useUser();
 
     useEffect(() => {
-        
         const checkPast = async (playerId : string | undefined) => {
             if (playerId){
                 try {
@@ -38,7 +37,6 @@ export default function GuessGridClient({target}: GuessGridClientProps){
             }
         }
         checkPast(user?.sub);
-        
     }, [user?.sub])
 
     useEffect(() => {
@@ -88,61 +86,48 @@ export default function GuessGridClient({target}: GuessGridClientProps){
             setInputValue('');
             return;
         }
-        if (inputValue.toUpperCase() === target.Name.toUpperCase()){
-            const result = {"correct": true, "guess_info": target, "comparisons": {"Name" : 'bg-green-600', 'Gender': 'bg-green-600', "Age": 'bg-green-600', 'Popularity': 'bg-green-600', "Followers": 'bg-green-600'}, "guess_count":count+1}
-            const prevGuesses = [...guesses, result];
-
-            setGuesses(prevGuesses);
-            setCount(result.guess_count);
-            submitGuess(user?.sub, prevGuesses)
-
-            setWin(true);
-            setTimeout(() => {
-                if (count === 0){
-                    alert("YOU'RE INSANE!");
-                } else if (count === 1){
-                    alert("That was fast!");
-                } else if (count === 2){
-                    alert("Good job!");
-                } else if (count === 3){
-                    alert("Nice!");
-                } else if (count === 4){
-                    alert("Close one!");
+        try{
+            if (count <= 5 && items.includes(inputValue.toUpperCase())){
+                const response = await fetch('http://localhost:5050/api/check',{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        guess: inputValue.toLowerCase(),
+                        target: target,
+                        guessCount: count
+                    }),
+                });
+                
+                const result = await response.json();
+                const prevGuesses = [...guesses, result];
+                setGuesses(prevGuesses);
+                setCount(result.guess_count);
+                
+                submitGuess(user?.sub, prevGuesses)
+                if (result.correct){
+                    setWin(true);
+                    submitGuess(user?.sub, prevGuesses); 
+                    setTimeout(() => {
+                        if (count === 0){alert("YOU'RE INSANE!");
+                        } else if (count === 1){alert("That was fast!");
+                        } else if (count === 2){alert("Good job!");
+                        } else if (count === 3){alert("Nice!");
+                        } else if (count === 4){alert("Close one!");
+                        } else {alert("Phew!");}
+                    }, 1000);
                 } else {
-                    alert("Phew!");
-                }
-            }, 1500);
-            
-        } else {
-            try {
-                if (count <= 5 && items.includes(inputValue.toUpperCase())){
-                    const response = await fetch('http://localhost:5050/api/check',{
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            guess: inputValue,
-                            target: target,
-                            guessCount: count
-                        }),
-                    });
-                    const result = await response.json();
-                    const prevGuesses = [...guesses, result];
-                    setGuesses(prevGuesses);
-                    setCount(result.guess_count);
-                    
-                    submitGuess(user?.sub, prevGuesses)
-                    
                     if (count === 5){
+                        submitGuess(user?.sub, prevGuesses);
                         setTimeout(() => {
                             alert(`Today's Artist: ${target?.Name}\nBetter luck tomorrow!`);
-                        }, 1500);
+                        }, 1000);
                     }
                 }
-            } catch (err) {
-                console.log(err);
             }
+        } catch (err) {
+            console.log(err);
         }
         setInputValue('');
     }
