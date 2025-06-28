@@ -58,10 +58,12 @@ def check_guess():
         "Popularity": 'bg-green-600' if abs(guess_info["Popularity"] - target_artist["Popularity"]) == 0 else 'bg-yellow-500' if abs(guess_info["Popularity"] - target_artist["Popularity"]) < 10 else 'bg-gray-600',
         "Followers": 'bg-green-400' if abs(guess_info["Followers"] - target_artist["Followers"]) == 0 else 'bg-yellow-500' if abs(guess_info["Followers"] - target_artist["Followers"]) < 10000 else 'bg-gray-600',
     }
-    
+    guess_info = guess_info.to_dict()
+    guess_info['Name'] = guess_info['Name'].upper()
+    guess_info['Gender'] = guess_info['Gender'].upper()
     return jsonify({
         "correct": False,
-        "guess_info": guess_info.to_dict(),
+        "guess_info": guess_info,
         "comparisons": comparisons,
         "guess_count": guess_count + 1
     })

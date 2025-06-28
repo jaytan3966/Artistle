@@ -128,7 +128,6 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                         }),
                     });
                     const result = await response.json();
-
                     const prevGuesses = [...guesses, result];
                     setGuesses(prevGuesses);
                     setCount(result.guess_count);
