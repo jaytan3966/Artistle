@@ -5,6 +5,7 @@ from upstash_redis import Redis
 from dotenv import load_dotenv
 import os
 import json
+import boto3
 
 app = Flask(__name__)
 CORS(app)
@@ -24,6 +25,8 @@ r = Redis(
     url=os.getenv("UPSTASH_REDIS_REST_URL"),
     token=os.getenv("UPSTASH_REDIS_REST_TOKEN")
 )
+
+# dynamodb = boto3.client('dynamodb')
 
 @app.route('/api/getArtistle')
 def get_artistle():
@@ -58,6 +61,8 @@ def check_guess():
         "Followers": 'bg-green-600' if abs(guess_info["Followers"] - target_artist["Followers"]) == 0 else 'bg-yellow-500' if abs(guess_info["Followers"] - target_artist["Followers"]) < 10000 else 'bg-gray-600',
     }
     guess_info = guess_info.to_dict()
+    guess_info["Name"] = guess_info["Name"].upper()
+    guess_info["Gender"] = guess_info["Gender"].upper()
     
     return jsonify({
         "correct": guess_info["Name"].upper() == target_artist["Name"],
@@ -75,6 +80,20 @@ def todays_guesses():
     response = r.set(playerId, guesses)
     response = r.expire(playerId, ttl)
     return jsonify({"resp" : response})
+
+# @app.route('/api/postResults', methods=['POST'])
+# def post_results():
+#     data = request.json
+#     playerId = data['playerId']
+#     guessCount = data['guessCount']
+#     win = data['win']
+#     dynamodb.update_item(
+#         TableName='artistleHistory',
+#         Item={
+#             'playerId': {'S':playerId},
+
+#         }
+#     )
 
 if __name__ == '__main__':
     app.run(port=5050, debug=True)
