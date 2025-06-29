@@ -1,9 +1,10 @@
 "use client"
-const categories = ["Name", "Gender", "Age", "Popularity", "Followers"];
 import { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import { GuessGridClientProps, guessInfo} from "./Interfaces";
 import { getSecondsToLocalMidnight } from "./GuessGrid";
 import { useUser } from "@auth0/nextjs-auth0";
+
+const categories = ["Name", "Gender", "Age", "Popularity", "Followers"];
 
 export default function GuessGridClient({target}: GuessGridClientProps){
     const [inputValue, setInputValue] = useState('');
@@ -62,7 +63,7 @@ export default function GuessGridClient({target}: GuessGridClientProps){
     const submitGuess = async (playerId : string | undefined, guesses: guessInfo[]) => {
         if (playerId){
             try {
-                const response = await fetch('http://localhost:5050/api/todaysGuesses', {
+                await fetch('http://localhost:5050/api/todaysGuesses', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -73,8 +74,6 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                         ttl: getSecondsToLocalMidnight()
                     }),
                 });
-                const resp = await response.json();
-                return resp;
             } catch (err) {
                 console.error(err)
             }
@@ -117,12 +116,35 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                         } else if (count === 4){alert("Close one!");
                         } else {alert("Phew!");}
                     }, 1000);
+        
+                    await fetch('http://localhost:5050/api/postResults', {
+                        method: 'POST',
+                        headers: {
+                        'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            playerId: user?.sub,
+                            guessCount: count+1,
+                            win: true
+                        }),
+                    })
                 } else {
                     if (count === 5){
                         submitGuess(user?.sub, prevGuesses);
                         setTimeout(() => {
                             alert(`Today's Artist: ${target?.Name}\nBetter luck tomorrow!`);
                         }, 1000);
+                        await fetch('http://localhost:5050/api/postResults', {
+                        method: 'POST',
+                        headers: {
+                        'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            playerId: user?.sub,
+                            guessCount: count+1,
+                            win: false
+                        }),
+                    })
                     }
                 }
             }

@@ -26,7 +26,8 @@ r = Redis(
     token=os.getenv("UPSTASH_REDIS_REST_TOKEN")
 )
 
-# dynamodb = boto3.client('dynamodb')
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('artistleHistory')
 
 @app.route('/api/getArtistle')
 def get_artistle():
@@ -81,19 +82,60 @@ def todays_guesses():
     response = r.expire(playerId, ttl)
     return jsonify({"resp" : response})
 
-# @app.route('/api/postResults', methods=['POST'])
-# def post_results():
-#     data = request.json
-#     playerId = data['playerId']
-#     guessCount = data['guessCount']
-#     win = data['win']
-#     dynamodb.update_item(
-#         TableName='artistleHistory',
-#         Item={
-#             'playerId': {'S':playerId},
-
-#         }
-#     )
+@app.route('/api/postResults', methods=['POST'])
+def post_results():
+    data = request.json
+    playerId = data['playerId']
+    guessCount = data['guessCount']
+    win = data['win']
+    
+    try:
+        if win:
+            table.update_item(
+                Key={
+                    'playerId': playerId  
+                },
+                ExpressionAttributeValues={
+                    ':inc': 1
+                },
+                ExpressionAttributeNames={
+                    '#guess':str(guessCount)
+                },
+                UpdateExpression="ADD \
+                totalGames :inc, \
+                wins :inc, \
+                guessDistribution.#guess :inc",
+            )
+        else:
+            table.update_item(
+                Key={'playerId': playerId},
+                ExpressionAttributeValues={
+                    ':inc': 1
+                },
+                UpdateExpression="ADD \
+                totalGames :inc"
+            )
+    except:
+        guessDistribution = {
+            '1': 0,
+            '2': 0,
+            '3': 0,
+            '4': 0,
+            '5': 0,
+            '6': 0
+        }
+        if win:
+            guessDistribution[str(guessCount)]=1
+        table.put_item(
+            Item={
+            'playerId': playerId,
+            'totalGames': 1,
+            'wins' : 1 if win else 0,
+            'guessDistribution': guessDistribution
+        })
+    return jsonify({"valid": True})
+        
+   
 
 if __name__ == '__main__':
     app.run(port=5050, debug=True)
