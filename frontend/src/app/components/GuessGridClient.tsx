@@ -104,10 +104,9 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                 setGuesses(prevGuesses);
                 setCount(result.guess_count);
                 
-                submitGuess(user?.sub, prevGuesses)
+                submitGuess(user?.sub, prevGuesses);
                 if (result.correct){
                     setWin(true);
-                    submitGuess(user?.sub, prevGuesses); 
                     setTimeout(() => {
                         if (count === 0){alert("YOU'RE INSANE!");
                         } else if (count === 1){alert("That was fast!");
@@ -116,6 +115,7 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                         } else if (count === 4){alert("Close one!");
                         } else {alert("Phew!");}
                     }, 1000);
+                    submitGuess(user?.sub, prevGuesses); 
         
                     await fetch('http://localhost:5050/api/postResults', {
                         method: 'POST',
@@ -148,8 +148,8 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                     }
                 }
             }
-        } catch (err) {
-            console.log(err);
+        } catch  {
+            alert("Sign in to save!");
         }
         setInputValue('');
     }
@@ -162,7 +162,6 @@ export default function GuessGridClient({target}: GuessGridClientProps){
             event.preventDefault();
         }
     }
-
     return(
         <div className="mx-auto max-w-3xl">
             <div className="grid grid-cols-5 mb-2 text-center font-bold max-w-[96vw]">
@@ -245,9 +244,15 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                             </ul>
                         </div>
                     </div>
+                    {user && 
                     <button onClick={() => submit()} className="box border-2 border-gray-600 rounded-md text-2xl font-bold m-1 duration-500 text-center w-2xl hover:bg-gray-200 hover:text-[#121213] hover:border-gray-200 max-w-[98vw]">SUBMIT</button>
-                </div>
+                    }
+                    {!user && 
+                    <a href="/auth/login" className="box border-2 border-gray-600 rounded-md text-2xl font-bold m-1 duration-500 text-center w-2xl hover:bg-gray-200 hover:text-[#121213] hover:border-gray-200 max-w-[98vw]">LOGIN TO SAVE YOUR PROGRESS</a>
+                    }
+                    </div>
             </div>
         </div>
     )
+    
 }

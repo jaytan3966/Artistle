@@ -135,7 +135,5 @@ def post_results():
         })
     return jsonify({"valid": True})
         
-   
-
 if __name__ == '__main__':
     app.run(port=5050, debug=True)
