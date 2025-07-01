@@ -3,6 +3,7 @@ import NavBar from "../components/Navbar";
 import { useUser } from "@auth0/nextjs-auth0";
 import dynamic from "next/dynamic";
 import 'chart.js/auto';
+import { useEffect, useState } from "react";
 
 const Bar = dynamic(() => import('react-chartjs-2').then((mod) => mod.Bar), {
   ssr: false,
@@ -11,11 +12,34 @@ const Bar = dynamic(() => import('react-chartjs-2').then((mod) => mod.Bar), {
 export default function Stats() {
 
   const {user} = useUser()
+  
+  const metrics = ["PLAYED", "WIN %"];
+  const [wins, setWins] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [guesses, setGuesses] = useState([]);
+
+  useEffect(() => {
+      const getStats = async (playerId : string | undefined) => {
+          if (playerId){
+              try {
+                const response = await fetch(`http://localhost:5050/api/stats?param=${playerId}`);
+                const result = await response.json();
+                setGuesses(Object.values(result.guessDistribution));
+                setWins(Math.round(result.wins/result.totalGames*100));
+                setTotal(result.totalGames);
+              } catch {
+                return;
+              }
+          }
+      }
+      getStats(user?.sub);
+  }, [user?.sub])
+
   const data = {
     labels: [1,2,3,4,5,6],
     datasets: [{
       label: 'guess',
-      data: user ? [1,4,2,3,5,6] : [0,0,0,0,0,0],
+      data: user ? guesses : [0,0,0,0,0,0],
       backgroundColor:["#006400", "#228B22", "#90EE90", "#FFFF99", "#FFD700", "#FFA500"],
       borderWidth: 1,
       hoverBackgroundColor:"#ffffff"
@@ -28,21 +52,19 @@ export default function Stats() {
       }
     },
     scales: {
-        y: {
-          display: false,
-          grid: {
-            display: false 
-          }
-        },
-        x: {
-          grid: {
-            display: false
-          }
+      y: {
+        display: false,
+        grid: {
+          display: false 
+        }
+      },
+      x: {
+        grid: {
+          display: false
         }
       }
     }
-  const stats = [100, 100, 5];
-  const metrics = ["PLAYED", "WIN %", "AVG. GUESSES"];
+  }
   
   return (
     <div className="grid">
@@ -54,19 +76,17 @@ export default function Stats() {
           {user ? (
             <div className="flex flex-col items-center justify-center m-10">
               <h1 className="text-2xl font-bold m-2">STATISTICS</h1>
-              <div className="grid grid-cols-3 text-center text-xl">
-                
-                {stats.map((name, i)=> (
-                  <h1 className="font-bold" key={i}>{name}</h1>
-                ))}
+              <div className="grid grid-cols-2 text-center text-xl">
+                <h1 className="font-bold">{total}</h1>
+                <h1 className="font-bold">{wins}</h1>
                 {metrics.map((name, i)=> (
-                  <h2 key={i}>{name}</h2>
+                  <h2 key={i} className="mx-5">{name}</h2>
                 ))}
               </div>
             </div>
           ):(<div></div>)}
           {user ? (
-          <h1 className="text-2xl font-bold">GUESS DISTRIBUTION</h1>
+          <h1 className="text-2xl font-bold m-2">GUESS DISTRIBUTION</h1>
         ) : (
           <a 
             href="/api/auth/login" 

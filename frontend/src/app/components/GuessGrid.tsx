@@ -12,7 +12,7 @@ export function getSecondsToLocalMidnight() {
 
 export default async function GuessGrid(){
     const target = await fetch(
-        `http://localhost:5050/api/getArtistle?date=${new Date().toLocaleDateString('en-CA')}`, 
+        `http://localhost:5050/api/todayArtistle?date=${new Date().toLocaleDateString('en-CA')}`, 
         {
             next: { 
             tags: ['artist-of-the-day'],

@@ -29,14 +29,14 @@ r = Redis(
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('artistleHistory')
 
-@app.route('/api/getArtistle')
+@app.route('/api/todayArtistle')
 def get_artistle():
     artist = r.get("artistleToday")
     response = make_response(artist)
     response.headers['Cache-Control'] = 'public, max-age=86400'
     return response
 
-@app.route('/api/getTodays')
+@app.route('/api/todays')
 def get_today():
     player = request.args.get('param')
     todaysGuesses = r.get(player)
@@ -44,6 +44,17 @@ def get_today():
         guesses = json.loads(todaysGuesses)
         return jsonify({"guesses": guesses})
     return jsonify({"guesses": []})
+
+@app.route('/api/stats')
+def get_stats():
+    playerId = request.args.get('param')
+    response = table.get_item(
+        Key={
+            'playerId': playerId  
+        }
+    )
+    return response["Item"]
+
 
 @app.route('/api/check', methods=['POST'])
 def check_guess():
@@ -82,7 +93,7 @@ def todays_guesses():
     response = r.expire(playerId, ttl)
     return jsonify({"resp" : response})
 
-@app.route('/api/postResults', methods=['POST'])
+@app.route('/api/results', methods=['POST'])
 def post_results():
     data = request.json
     playerId = data['playerId']

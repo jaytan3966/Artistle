@@ -23,7 +23,7 @@ export default function GuessGridClient({target}: GuessGridClientProps){
         const checkPast = async (playerId : string | undefined) => {
             if (playerId){
                 try {
-                    const response = await fetch(`http://localhost:5050/api/getTodays?param=${playerId}`);
+                    const response = await fetch(`http://localhost:5050/api/todays?param=${playerId}`);
                     const result = await response.json();
                     if (result.guesses.length > 0){
                         setGuesses(result.guesses);
@@ -117,7 +117,7 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                     }, 1000);
                     submitGuess(user?.sub, prevGuesses); 
         
-                    await fetch('http://localhost:5050/api/postResults', {
+                    await fetch('http://localhost:5050/api/results', {
                         method: 'POST',
                         headers: {
                         'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                         setTimeout(() => {
                             alert(`Today's Artist: ${target?.Name}\nBetter luck tomorrow!`);
                         }, 1000);
-                        await fetch('http://localhost:5050/api/postResults', {
+                        await fetch('http://localhost:5050/api/results', {
                         method: 'POST',
                         headers: {
                         'Content-Type': 'application/json',
