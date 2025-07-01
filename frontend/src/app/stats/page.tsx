@@ -1,13 +1,85 @@
+"use client"
 import NavBar from "../components/Navbar";
+import { useUser } from "@auth0/nextjs-auth0";
+import dynamic from "next/dynamic";
+import 'chart.js/auto';
+
+const Bar = dynamic(() => import('react-chartjs-2').then((mod) => mod.Bar), {
+  ssr: false,
+})
 
 export default function Stats() {
+
+  const {user} = useUser()
+  const data = {
+    labels: [1,2,3,4,5,6],
+    datasets: [{
+      label: 'guess',
+      data: user ? [1,4,2,3,5,6] : [0,0,0,0,0,0],
+      backgroundColor:["#006400", "#228B22", "#90EE90", "#FFFF99", "#FFD700", "#FFA500"],
+      borderWidth: 1,
+      hoverBackgroundColor:"#ffffff"
+    }]
+  }
+  const options = {
+    plugins: {
+      legend: {
+        display: false
+      }
+    },
+    scales: {
+        y: {
+          display: false,
+          grid: {
+            display: false 
+          }
+        },
+        x: {
+          grid: {
+            display: false
+          }
+        }
+      }
+    }
+  const stats = [100, 100, 5];
+  const metrics = ["PLAYED", "WIN %", "AVG. GUESSES"];
+  
   return (
     <div className="grid">
       <header>
         <NavBar/>
       </header>
-      <div className="flex items-center justify-center">
-        
+      <div className="flex flex-col items-center justify-center max-w-[100vw] max-h-[90vh] p-4 gap-4 mt-[10vh]">
+        <div className="w-[50vw] h-[50vh] flex flex-col items-center justify-center">
+          {user ? (
+            <div className="flex flex-col items-center justify-center m-10">
+              <h1 className="text-2xl font-bold m-2">STATISTICS</h1>
+              <div className="grid grid-cols-3 text-center text-xl">
+                
+                {stats.map((name, i)=> (
+                  <h1 className="font-bold" key={i}>{name}</h1>
+                ))}
+                {metrics.map((name, i)=> (
+                  <h2 key={i}>{name}</h2>
+                ))}
+              </div>
+            </div>
+          ):(<div></div>)}
+          {user ? (
+          <h1 className="text-2xl font-bold">GUESS DISTRIBUTION</h1>
+        ) : (
+          <a 
+            href="/api/auth/login" 
+            className="box border-2 border-gray-600 rounded-md text-2xl font-bold m-1 duration-500 text-center w-full max-w-[98vw] p-4 hover:bg-gray-200 hover:text-[#121213] hover:border-gray-200"
+          >
+            LOGIN TO SAVE YOUR PROGRESS
+          </a>
+        )}
+          <Bar 
+            data={data} 
+            options={options}
+          />
+        </div>
       </div>
     </div>
   );

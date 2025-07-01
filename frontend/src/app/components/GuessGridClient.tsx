@@ -244,12 +244,11 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                             </ul>
                         </div>
                     </div>
-                    {user && 
-                    <button onClick={() => submit()} className="box border-2 border-gray-600 rounded-md text-2xl font-bold m-1 duration-500 text-center w-2xl hover:bg-gray-200 hover:text-[#121213] hover:border-gray-200 max-w-[98vw]">SUBMIT</button>
-                    }
-                    {!user && 
+                    {user ?
+                    <button onClick={() => submit()} className="box border-2 border-gray-600 rounded-md text-2xl font-bold m-1 duration-500 text-center w-2xl hover:bg-gray-200 hover:text-[#121213] hover:border-gray-200 max-w-[98vw]">SUBMIT</button> :
                     <a href="/auth/login" className="box border-2 border-gray-600 rounded-md text-2xl font-bold m-1 duration-500 text-center w-2xl hover:bg-gray-200 hover:text-[#121213] hover:border-gray-200 max-w-[98vw]">LOGIN TO SAVE YOUR PROGRESS</a>
                     }
+                    
                     </div>
             </div>
         </div>
