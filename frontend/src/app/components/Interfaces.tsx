@@ -3,7 +3,7 @@ interface artistInfo{
     Gender: string,
     Age: number,
     Popularity: number,
-    Followers: number
+    Followers: number,
 }
 export interface GuessGridClientProps {
   target: artistInfo;

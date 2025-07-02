@@ -32,13 +32,15 @@ export default function Stats() {
               }
           }
       }
-      getStats(user?.sub);
-  }, [user?.sub])
+      if (user){
+        getStats(user?.sub);
+      }
+  }, [user?.sub, user])
 
   const data = {
     labels: [1,2,3,4,5,6],
     datasets: [{
-      label: 'guess',
+      label: 'guesses',
       data: user ? guesses : [0,0,0,0,0,0],
       backgroundColor:["#006400", "#228B22", "#90EE90", "#FFFF99", "#FFD700", "#FFA500"],
       borderWidth: 1,
@@ -71,20 +73,19 @@ export default function Stats() {
       <header>
         <NavBar/>
       </header>
-      <div className="flex flex-col items-center justify-center max-w-[100vw] max-h-[90vh] p-4 gap-4 mt-[10vh]">
-        <div className="w-[50vw] h-[50vh] flex flex-col items-center justify-center">
-          {user ? (
-            <div className="flex flex-col items-center justify-center m-10">
-              <h1 className="text-2xl font-bold m-2">STATISTICS</h1>
-              <div className="grid grid-cols-2 text-center text-xl">
-                <h1 className="font-bold">{total}</h1>
-                <h1 className="font-bold">{wins}</h1>
-                {metrics.map((name, i)=> (
-                  <h2 key={i} className="mx-5">{name}</h2>
-                ))}
-              </div>
+      <div className="flex items-center justify-center max-w-full max-h-full p-4 gap-4 mt-[10vh]">
+        <div className="w-[90vw] h-[60vh] flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center m-10">
+            <h1 className="text-2xl font-bold m-3">STATISTICS</h1>
+            <div className="grid grid-cols-2 text-center text-xl">
+              <h1 className="font-bold">{total}</h1>
+              <h1 className="font-bold">{wins}</h1>
+              {metrics.map((name, i)=> (
+                <h2 key={i} className="mx-4">{name}</h2>
+              ))}
             </div>
-          ):(<div></div>)}
+          </div>
+          
           {user ? (
           <h1 className="text-2xl font-bold m-2">GUESS DISTRIBUTION</h1>
         ) : (

@@ -101,6 +101,7 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                 
                 const result = await response.json();
                 const prevGuesses = [...guesses, result];
+
                 setGuesses(prevGuesses);
                 setCount(result.guess_count);
                 
@@ -194,7 +195,7 @@ export default function GuessGridClient({target}: GuessGridClientProps){
                             shouldFlip ? 'rotate-x-90' : ''
                             }`}
                         > 
-                            <div className={`absolute w-full h-full backface-hidden flex items-center justify-center font-bold text-xl text-center ${bgClassSafe(guesses[rowIndex]?.comparisons[key])} `}>
+                            <div className={`absolute w-full h-full backface-hidden flex items-center justify-center font-bold text-lg text-center overflow-hidden ${bgClassSafe(guesses[rowIndex]?.comparisons[key])} `}>
                                 {content}
                             </div>
                             <div className="absolute w-full h-full backface-hidden transform flex items-center justify-center"></div>
