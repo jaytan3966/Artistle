@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Montserrat, Barlow_Condensed } from 'next/font/google';
 
-export const montserrat = Montserrat({
+const montserrat = Montserrat({
   subsets: ['latin'],
   variable: '--font-montserrat',
 });
 
-export const barlowCondensed = Barlow_Condensed({
+const barlowCondensed = Barlow_Condensed({
   subsets: ['latin'],
   weight: '400',
   variable: '--font-barlow',
