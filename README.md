@@ -1,9 +1,6 @@
 # Artistle - Wordle for Spotify Artists
 A daily music challenge game where players guess Spotify artists based on their songs, built with Next.js, Tailwind CSS, and powered by AWS serverless architecture.
 
-https://img.shields.io/badge/Live_Demo-Artistle_Nu-green?style=for-the-badge&logo=vercel
-https://img.shields.io/badge/AWS-Serverless-FF9900?style=for-the-badge&logo=amazonaws
-
 ## Features
 - Daily Artist Puzzle: New Spotify artist challenge every 24 hours
 
