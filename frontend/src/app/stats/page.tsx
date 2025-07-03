@@ -73,10 +73,10 @@ export default function Stats() {
       <header>
         <NavBar/>
       </header>
-      <div className="flex items-center justify-center max-w-full max-h-full p-4 gap-4 mt-[10vh]">
-        <div className="w-[90vw] h-[60vh] flex flex-col items-center justify-center">
-          <div className="flex flex-col items-center justify-center m-10">
-            <h1 className="text-2xl font-bold m-3">STATISTICS</h1>
+      <div className="flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center">
+          <div className="perspective-1000 max-w-full max-h-full rounded-s relative text-center p-3">
+            <h1 className="text-3xl font-bold mb-3">STATISTICS</h1>
             <div className="grid grid-cols-2 text-center text-xl">
               <h1 className="font-bold">{total}</h1>
               <h1 className="font-bold">{wins}</h1>
@@ -85,7 +85,6 @@ export default function Stats() {
               ))}
             </div>
           </div>
-          
           {user ? (
           <h1 className="text-2xl font-bold m-2">GUESS DISTRIBUTION</h1>
         ) : (
@@ -98,7 +97,7 @@ export default function Stats() {
         )}
           <Bar 
             data={data} 
-            options={options}
+            options={options} className="max-w-[70vw] h-[55vh]"
           />
         </div>
       </div>
