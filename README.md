@@ -3,22 +3,17 @@ A daily music challenge game where players guess Spotify artists based on their 
 
 ## Features
 - Daily Artist Puzzle: New Spotify artist challenge every 24 hours
-
 - Progressive Hints: Hints along the way to see if you're getting closer (or farther!)
 
 ## Tech Highlights
 - Serverless Generation:
-
   - AWS Lambda + CloudWatch Events for daily artist selection
-
   - Redis caching for instant puzzle delivery
 
 - Player Stats:
-
   - DynamoDB tracks your past performance
 
 - Secure Auth:
-
   - Auth0 integration with Next.js middleware
 
 - Frontend:
